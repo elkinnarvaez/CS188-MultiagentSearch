@@ -87,7 +87,10 @@ class ReflexAgent(Agent):
             ghostDistances.append(manhattanDistance(newPos, ghostPos))
         
         minGhostDistance = min(ghostDistances)
-        minFoodDistance = max(foodDistances) if len(foodDistances) > 0 else 1
+        minFoodDistance = min(foodDistances) if len(foodDistances) > 0 else 1
+    
+        if(newFood != currentGameState.getFood() and minGhostDistance > 1):
+            return float('inf')
 
         return minGhostDistance/minFoodDistance
 
