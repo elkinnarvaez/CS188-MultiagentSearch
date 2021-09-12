@@ -46,8 +46,6 @@ class ReflexAgent(Agent):
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
-        "Add more of your code here if you want to"
-
         return legalMoves[chosenIndex]
 
     def evaluationFunction(self, currentGameState, action):
@@ -152,7 +150,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"
+        print(gameState)
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
