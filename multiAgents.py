@@ -329,6 +329,23 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         action = self.expectimaxDecision(gameState)
         return action
 
+# def betterEvaluationFunction(currentGameState):
+#     """
+#     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
+#     evaluation function (question 5).
+
+#     DESCRIPTION: <write something here so we know what you did>
+#     """
+#     ghostStates = currentGameState.getGhostStates()
+#     ghostDistances = []
+#     for ghostState in ghostStates:
+#         ghostPos = ghostState.getPosition()
+#         ghostDistances.append(manhattanDistance(currentGameState.getPacmanPosition(), ghostPos))
+#     if(currentGameState.getNumFood() == 0):
+#         return min(ghostDistances)
+#     return min(ghostDistances)/currentGameState.getNumFood()
+
+
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -336,8 +353,45 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    ghostStates = currentGameState.getGhostStates()
+    food = currentGameState.getFood()
+    ghostDistances = []
+    for ghostState in ghostStates:
+        ghostPos = ghostState.getPosition()
+        ghostDistances.append(manhattanDistance(currentGameState.getPacmanPosition(), ghostPos))
+    foodDistances = []
+    for i in range(food.width):
+        for j in range(food.height):
+            if(food[i][j] == True):
+                foodDistances.append(manhattanDistance(currentGameState.getPacmanPosition(), (i, j)))
+    minGhostDistance = min(ghostDistances)
+    if(currentGameState.getNumFood() == 0):
+        return (currentGameState.getScore() - minGhostDistance)
+    return (currentGameState.getScore() - minGhostDistance)/currentGameState.getNumFood()
+
+# def betterEvaluationFunction(currentGameState):
+#     """
+#     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
+#     evaluation function (question 5).
+
+#     DESCRIPTION: <write something here so we know what you did>
+#     """
+#     import numpy
+#     ghostStates = currentGameState.getGhostStates()
+#     food = currentGameState.getFood()
+#     ghostDistances = []
+#     for ghostState in ghostStates:
+#         ghostPos = ghostState.getPosition()
+#         ghostDistances.append(manhattanDistance(currentGameState.getPacmanPosition(), ghostPos))
+#     foodDistances = []
+#     for i in range(food.width):
+#         for j in range(food.height):
+#             if(food[i][j] == True):
+#                 foodDistances.append(manhattanDistance(currentGameState.getPacmanPosition(), (i, j)))
+#     minGhostDistance = numpy.mean(ghostDistances)
+#     if(currentGameState.getNumFood() == 0):
+#         return (currentGameState.getScore() - minGhostDistance)
+#     return (currentGameState.getScore() - currentGameState.getNumFood())/(currentGameState.getNumFood()) - minGhostDistance
 
 # Abbreviation
 better = betterEvaluationFunction
