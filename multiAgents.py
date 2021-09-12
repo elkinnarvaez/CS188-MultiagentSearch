@@ -222,12 +222,57 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (question 3)
     """
 
+    def maxValue(self, gameState, currentDepth, alpha, beta):
+        if(currentDepth == self.depth):
+            return self.evaluationFunction(gameState)
+        v = float('-inf')
+        legalActions = gameState.getLegalActions(0)
+        for action in legalActions:
+            v = max(v, self.minValue(gameState.generateSuccessor(0, action), 1, currentDepth, alpha, beta))
+            if(v > beta):
+                return v
+            alpha = max(alpha, v)
+        if(v == float('-inf')):
+            return self.evaluationFunction(gameState)
+        return v
+
+    def minValue(self, gameState, currentGhostIndex, currentDepth, alpha, beta):
+        if(currentDepth == self.depth):
+            return self.evaluationFunction(gameState)
+        v = float('inf')
+        legalActions = gameState.getLegalActions(currentGhostIndex)
+        for action in legalActions:
+            if(currentGhostIndex == gameState.getNumAgents() - 1):
+                v = min(v, self.maxValue(gameState.generateSuccessor(currentGhostIndex, action), currentDepth + 1, alpha, beta))
+            else:
+                v = min(v, self.minValue(gameState.generateSuccessor(currentGhostIndex, action), currentGhostIndex + 1, currentDepth, alpha, beta))
+            if(v < alpha):
+                return v
+            beta = min(beta, v)
+        if(v == float('inf')):
+            return self.evaluationFunction(gameState)
+        return v
+
+    def alphaBetaSearch(self, gameState):
+        bestAction, bestScore = None, float('-inf')
+        alpha, beta = float('-inf'), float('inf')
+        legalActions = gameState.getLegalActions(0)
+        for action in legalActions:
+            score = self.minValue(gameState.generateSuccessor(0, action), 1, 0, alpha, beta)
+            if(score > bestScore):
+                bestScore = score
+                bestAction = action
+            if(score > beta):
+                return action
+            alpha = max(alpha, score)
+        return bestAction
+
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        action = self.alphaBetaSearch(gameState)
+        return action
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
