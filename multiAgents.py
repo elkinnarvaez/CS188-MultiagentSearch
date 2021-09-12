@@ -127,6 +127,69 @@ class MinimaxAgent(MultiAgentSearchAgent):
     Your minimax agent (question 2)
     """
 
+    def maxValue(self, gameState, currentDepth):
+        if(currentDepth == self.depth):
+            return self.evaluationFunction(gameState)
+        v = float('-inf')
+        legalActions = gameState.getLegalActions(0)
+        for action in legalActions:
+            v = max(v, self.minValue(gameState.generateSuccessor(0, action), 1, currentDepth))
+        if(v == float('-inf')):
+            return self.evaluationFunction(gameState)
+        return v
+
+    def minValue(self, gameState, currentGhostIndex, currentDepth):
+        if(currentDepth == self.depth):
+            return self.evaluationFunction(gameState)
+        v = float('inf')
+        legalActions = gameState.getLegalActions(currentGhostIndex)
+        for action in legalActions:
+            if(currentGhostIndex == gameState.getNumAgents() - 1):
+                v = min(v, self.maxValue(gameState.generateSuccessor(currentGhostIndex, action), currentDepth + 1))
+            else:
+                v = min(v, self.minValue(gameState.generateSuccessor(currentGhostIndex, action), currentGhostIndex + 1, currentDepth))
+        if(v == float('inf')):
+            return self.evaluationFunction(gameState)
+        return v
+
+    def minimaxDecision(self, gameState):
+        bestAction, bestScore = None, float('-inf')
+        legalActions = gameState.getLegalActions(0)
+        for action in legalActions:
+            score = self.minValue(gameState.generateSuccessor(0, action), 1, 0)
+            if(score > bestScore):
+                bestScore = score
+                bestAction = action
+        return bestAction
+
+    # def minimax(self, gameState, currentDepth, currentAgentIndex):
+    #     if(currentAgentIndex == gameState.getNumAgents()):
+    #         currentAgentIndex = 0
+    #         currentDepth += 1
+        
+    #     if(currentDepth == self.depth):
+    #         return None, self.evaluationFunction(gameState)
+
+    #     bestAction, bestScore = None, None
+    #     if(currentDepth == 0):
+    #         legalActions = gameState.getLegalActions(currentAgentIndex)
+    #         for action in legalActions:
+    #             _, score = self.minimax(gameState.generateSuccessor(currentAgentIndex, action), currentDepth, currentAgentIndex + 1)
+    #             if(bestScore is None or score > bestScore):
+    #                 bestAction = action
+    #                 bestScore = score
+    #     else:
+    #         legalActions = gameState.getLegalActions(currentAgentIndex)
+    #         for action in legalActions:
+    #             _, score = self.minimax(gameState.generateSuccessor(currentAgentIndex, action), currentDepth, currentAgentIndex + 1)
+    #             if(bestScore is None or score < bestScore):
+    #                 bestAction = action
+    #                 bestScore = score
+        
+    #     if(bestScore is None):
+    #         return None, self.evaluationFunction(gameState)
+    #     return bestAction, bestScore
+
     def getAction(self, gameState):
         """
         Returns the minimax action from the current gameState using self.depth
@@ -150,8 +213,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        print(gameState)
-        util.raiseNotDefined()
+        # action, score = self.minimax(gameState, 0, 0)
+        action = self.minimaxDecision(gameState)
+        return action
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
